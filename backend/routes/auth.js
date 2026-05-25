@@ -2,7 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const User = require("../models/User");
-const router = express.Router();
+const verifyToken = require("../middleware/verifyToken");
+
+const router = require("express").Router();
 
 router.post("/register", async (req, res) => {
 
@@ -70,17 +72,25 @@ router.post("/login", async (req, res) => {
 
 
         res.json({
-         message: "Login successful",
-         token
-            
+            message: "Login successful",
+            token
+
         })
     }
 
     catch (err) {
         res.status(500).json({ message: err.message })
     }
+})
 
+ router.get("/test", verifyToken, (req, res) => {
+  res.json({
+    message: "Middleware works",
+    user: req.user,
+  });
 });
+
+;
 
 
 module.exports = router;
