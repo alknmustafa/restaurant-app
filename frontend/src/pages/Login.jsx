@@ -1,14 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!email || !password) {
+      toast.warn("You need to fill all fields");
+      return;
+    }
+
+    setLoading(true);
+
     try {
       const response = await fetch("http://localhost:5000/auth/login", {
         method: "POST",
@@ -23,14 +36,25 @@ export default function Login() {
       const data = await response.json();
       console.log(data);
       if (response.ok) {
+
         localStorage.setItem("token", data.token);
-        alert("Login successful");
+
+        toast.success("Login successful");
+
+        setTimeout(()=>{
+          navigate("/dashboard");
+        },800);
+
+       
       } else {
-        alert(data.message);
+        toast.error(data.message || "Login failed.");
       }
     } catch (error) {
       console.error(error);
     }
+    finally {
+  setLoading(false);
+}
 
   }
 
@@ -110,9 +134,9 @@ export default function Login() {
 
           <input
             type="email"
-            placeholder="Enter email"
+            placeholder="Enter your email"
             value={email}
-            onChange={(e)=> setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full bg-gray-100 border border-gray-200 text-xl px-3 py-3 rounded-md
             focus:outline-none focus:border-red-400"
           />
@@ -121,18 +145,26 @@ export default function Login() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e)=> setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-gray-100 border border-gray-200 text-xl px-3 py-3 rounded-md
             focus:outline-none focus:border-red-400"
           />
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-red-500 text-white text-xl px-3 py-3 rounded-md
             hover:bg-red-600 transition"
           >
-            Login
+            {loading ? "Loading..." : "Login"}
           </button>
+
+          <p className="text-sm text-gray-500 text-center mt-4">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-red-500 hover:underline">
+              Register now
+            </Link>
+          </p>
 
         </form>
 
