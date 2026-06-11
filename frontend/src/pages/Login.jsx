@@ -10,15 +10,18 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const isFormValid = email.trim() && password;
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      toast.warn("You need to fill all fields");
+    if (!isFormValid)
       return;
-    }
+
+    if (loading)
+      return;
 
     setLoading(true);
 
@@ -41,11 +44,11 @@ export default function Login() {
 
         toast.success("Login successful");
 
-        setTimeout(()=>{
+        setTimeout(() => {
           navigate("/dashboard");
-        },800);
+        }, 800);
 
-       
+
       } else {
         toast.error(data.message || "Login failed.");
       }
@@ -53,8 +56,8 @@ export default function Login() {
       console.error(error);
     }
     finally {
-  setLoading(false);
-}
+      setLoading(false);
+    }
 
   }
 
@@ -152,13 +155,20 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isFormValid}
             className="w-full bg-red-500 text-white text-xl px-3 py-3 rounded-md
-            hover:bg-red-600 transition"
+  hover:bg-red-600 transition disabled:opacity-50
+  flex items-center justify-center gap-2"
           >
-            {loading ? "Loading..." : "Login"}
+            {loading ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
-
           <p className="text-sm text-gray-500 text-center mt-4">
             Don't have an account?{" "}
             <Link to="/register" className="text-red-500 hover:underline">
