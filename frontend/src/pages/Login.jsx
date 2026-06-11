@@ -41,11 +41,12 @@ export default function Login() {
       if (response.ok) {
 
         localStorage.setItem("token", data.token);
+        localStorage.setItem("name", data.user.name)
 
         toast.success("Login successful");
 
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/");
         }, 800);
 
 
