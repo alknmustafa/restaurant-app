@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ButtonComponent from "./ButtonComponent";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -35,7 +36,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="flex flex-row items-center p-6 bg-white border-b fixed w-full z-50">
+    <nav className="flex flex-row items-center p-6 bg-white border-b sticky w-full z-50">
 
       {/* LEFT - LOGO + MENU */}
       <div className="flex items-center gap-10">
@@ -51,9 +52,9 @@ export default function Navbar() {
 
         {/* MENU */}
         <div className="hidden md:flex items-center gap-8">
-          <Link className="text-gray-500 hover:text-black">Search</Link>
-          <Link className="text-gray-500 hover:text-black">Popular</Link>
           <Link className="text-gray-500 hover:text-black">Home</Link>
+          <Link className="text-gray-500 hover:text-black">Popular</Link>
+          <Link className="text-gray-500 hover:text-black">Search</Link>
         </div>
 
       </div>
@@ -67,15 +68,11 @@ export default function Navbar() {
           {!token ? (
             <>
               <Link to="/register">
-                <button className="border border-gray-500 text-gray-500 py-2 px-6 rounded-full hover:bg-gray-600 hover:text-white transition">
-                  Sign up
-                </button>
+                <ButtonComponent variant="secondary" children={"Sign Up"}/>
               </Link>
 
               <Link to="/login">
-                <button className="bg-red-600 text-white py-2 px-6 rounded-full hover:bg-red-700 transition">
-                  Login
-                </button>
+              <ButtonComponent variant="primary" children={"Login"} className="px-8"/>
               </Link>
             </>
           ) : (
