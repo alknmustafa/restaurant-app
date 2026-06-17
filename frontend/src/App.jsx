@@ -22,7 +22,7 @@ export default function App() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <UserDashboard />
+            <UserDashboard/>
           </ProtectedRoute>
         } />
     </Routes>
