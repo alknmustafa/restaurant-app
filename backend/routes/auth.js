@@ -94,7 +94,72 @@ router.get("/test", verifyToken, (req, res) => {
     });
 });
 
-;
+router.get("/user", verifyToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select(
+            "name email country phone address favorites paymentMethods"
+
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        res.json(user);
+    }
+    catch (err) {
+        res.status(500).json({
+            message: err.message
+        });
+    }
+});
 
 
-module.exports = router;
+router.put("/user", verifyToken, async (req, res) => {
+    try {
+        const updateData = {};
+
+        if (req.body.name !== undefined) updateData.name = req.body.name;
+        if (req.body.country !== undefined) updateData.country = req.body.country;
+        if (req.body.phone !== undefined) updateData.phone = req.body.phone;
+        if (req.body.address !== undefined) updateData.address = req.body.address;
+
+        const user = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: updateData },
+            { returnDocument: "after" }
+        ).select("name email country phone address");
+
+        res.json(user);
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+
+
+router.delete("/user", verifyToken, async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const deletedUser = await User.findByIdAndUpdate(userId, { isDeleted: true });
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        res.json({ message: "Your account deleted successfully." });
+    }
+    catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+
+});
+
+
+
+
+module.exports = router;    
