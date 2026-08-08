@@ -1,12 +1,11 @@
 
-## Shoppi
-### Full-Stack Food Delivery Web Application
+## Shoppi Full-Stack Food Delivery Web Application
 
-#### Overview
+### Overview
 
 Shoppi is a full-stack food delivery web application where users can discover restaurants, explore cuisines, filter restaurants based on their preferences, and place food orders.
 
-🚧 Project Status: Currently under active development.
+#### 🚧 Project Status: Currently under active development.
 
 
 ## Homepage
@@ -24,7 +23,7 @@ Shoppi is a full-stack food delivery web application where users can discover re
 ## Popular
 <br> 
 <img width="1588" height="1656" alt="popular_page" src="https://github.com/user-attachments/assets/a806a825-4f9b-434b-93ec-1657588ac873" />
-<br> <br>
+<br>
 <p>
   Restaurant listing page with category browsing, price range and feature filters (Budget Friendly, Free Delivery, Fine Dining).
 </p>
@@ -32,9 +31,8 @@ Shoppi is a full-stack food delivery web application where users can discover re
 <br>
 
 ## Login & Register
-<br>
  User authentication interface for account registration and login.
-<br> <br>
+<br> <br> <br>
 <img width="1606" height="911" alt="register_page" src="https://github.com/user-attachments/assets/e9bd909a-8488-448c-8134-c824f5ef248b" />
 <br> <br>
 <img width="1606" height="911" alt="login_page" src="https://github.com/user-attachments/assets/3a5da8b4-bfe9-443e-b3da-61c135f4009d" />
@@ -42,13 +40,11 @@ Shoppi is a full-stack food delivery web application where users can discover re
 <br><br>
 
 ## Responsive Design 📱
-<br>
-
 Shoppi is designed to provide a responsive experience across desktop and mobile devices.
-
+<br><br>
 <img width="770" height="8306" alt="mobil_homepage" src="https://github.com/user-attachments/assets/f725f8e1-93d1-457d-98a6-5ac9aba595db" />
 
-<br> <br>
+<br> 
 
 ## ✨ Features
 
