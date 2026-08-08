@@ -20,9 +20,9 @@ Shoppi is a full-stack food delivery web application where users can discover re
 
 <br>
 
-## Popular
+## Popular Page
 <br> 
-<img width="1588" height="1656" alt="popular_page" src="https://github.com/user-attachments/assets/a806a825-4f9b-434b-93ec-1657588ac873" />
+<img width="1588" height="1375" alt="popular_page" src="https://github.com/user-attachments/assets/6ccb3ac5-e557-4542-93f1-ef68e46cbaef" />
 <br>
 <p>
   Restaurant listing page with category browsing, price range and feature filters (Budget Friendly, Free Delivery, Fine Dining).
@@ -30,7 +30,7 @@ Shoppi is a full-stack food delivery web application where users can discover re
 
 <br>
 
-## Login & Register
+## Login & Register Page
  User authentication interface for account registration and login.
 <br> <br> <br>
 <img width="1606" height="911" alt="register_page" src="https://github.com/user-attachments/assets/e9bd909a-8488-448c-8134-c824f5ef248b" />
