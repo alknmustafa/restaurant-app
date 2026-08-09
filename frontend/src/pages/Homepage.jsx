@@ -1,15 +1,19 @@
-import { ChevronRightIcon, HandRaisedIcon } from "@heroicons/react/24/solid";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import NavbarComponent from "../components/NavbarComponent";
+import FooterComponent from "../components/FooterComponent";
 import RestaurantCardComponent from "../components/RestaurantCardComponent";
+import { ChevronRightIcon, HandRaisedIcon } from "@heroicons/react/24/solid";
 import HandIcon from "../../public/icons/HandIcon";
 import ButtonComponent from "../components/ButtonComponent";
 import CuisineLabelComponent from "../components/CuisineLabelComponent";
-import { Link } from "react-router-dom";
+
 
 
 export default function Homepage() {
 
   const isLoggedIn = !!localStorage.getItem("token");
+  const navigate = useNavigate();
 
   return (
     <>
@@ -23,7 +27,7 @@ export default function Homepage() {
           <div className="relative w-full h-[300px] md:h-[500px] rounded-xl overflow-hidden">
 
             <img
-              src="/images/test2-img.jpg"
+              src="/images/layout-img.jpg"
               className="w-full h-full object-cover blur-sm"
             />
 
@@ -37,8 +41,11 @@ export default function Homepage() {
                   Discover a variety of local cuisines!
                 </p>
 
-                <ButtonComponent variant="primary" children={"Get Started"} className="mt-6 md:hidden px-5 py-3" />
-
+                <ButtonComponent 
+                variant="primary" 
+                children={"Get Started"}
+                onClick={() => navigate("/popular")} 
+                className="mt-6 md:hidden px-5 py-3" />
               </div>
             </div>
 
@@ -68,9 +75,12 @@ export default function Homepage() {
                 <p className="text-gray-400 mt-2">Select method</p>
               </div>
 
-              <button className="p-4 rounded-3xl bg-red-600 hover:bg-red-700">
+              <a
+                href="/popular"
+                className="p-4 rounded-3xl bg-red-600 hover:bg-red-700 inline-flex items-center justify-center"
+              >
                 <ChevronRightIcon className="w-6 h-6 text-white" />
-              </button>
+              </a>
             </div>
           </div>
 
@@ -160,32 +170,38 @@ export default function Homepage() {
           </div>
         </div>
 
-        {/* BOTTOM SIGN UP */}
         {!isLoggedIn && (
-          <div className="flex flex-row items-center mt-20 p-12 border shadow-2xl w-full h-28 rounded-3xl">
-            <HandIcon size={45} />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0 mt-10 sm:mt-20 p-6 sm:p-12 border shadow-2xl w-full rounded-3xl">
 
-            <div className="flex flex-col ml-10">
+            <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-100">
+              <HandIcon size={30} />
+            </div>
+
+            <div className="flex flex-col sm:ml-10">
               <h1 className="font-bold">Hungry?</h1>
               <h1 className="text-gray-500">
                 Get exclusive offers and discounts on your favorite restaurants. Sign up now!
               </h1>
             </div>
 
-            <div className="ml-auto">
+            <div className="sm:ml-auto w-full sm:w-auto">
               <Link to="/register">
-                <ButtonComponent variant="secondary" className="px-14 py-2 border-black">
+                <ButtonComponent
+                  variant="secondary"
+                  className="w-full sm:w-auto px-6 sm:px-14 py-2 border-black"
+                >
                   Sign up now
                 </ButtonComponent>
               </Link>
             </div>
+
           </div>
         )}
 
-        <div className="mt-20">
-          <h1>s</h1>
-        </div>
+      </div>
 
+      <div className="mt-20">
+        <FooterComponent />
       </div>
     </>
   );

@@ -26,7 +26,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,8 +126,8 @@ export default function Login() {
         />
 
         {/* TEXT */}
-        <div className="text-center text-xl text-gray-600 mb-4 max-w-xs">
-          <span className="text-red-500 font-semibold text-xl">
+        <div className="text-center text-lg md:text-xl text-gray-600 mb-4 max-w-xs">
+          <span className="text-red-500 font-semibold">
             Login
           </span>{" "}
           to your account to manage your services and explore new tastes.
@@ -141,7 +141,7 @@ export default function Login() {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-gray-100 border border-gray-200 text-xl px-3 py-3 rounded-md
+            className="w-full bg-gray-100 border border-gray-200 text-lg md:text-xl px-3 py-3 rounded-md
             focus:outline-none focus:border-red-400"
           />
 
@@ -150,14 +150,14 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-gray-100 border border-gray-200 text-xl px-3 py-3 rounded-md
+            className="w-full bg-gray-100 border border-gray-200 text-lg md:text-xl px-3 py-3 rounded-md
             focus:outline-none focus:border-red-400"
           />
 
           <button
             type="submit"
             disabled={loading || !isFormValid}
-            className="w-full bg-red-500 text-white text-xl px-3 py-3 rounded-md
+            className="w-full bg-red-500 text-white text-lg md:text-xl px-3 py-3 rounded-md
   hover:bg-red-600 transition disabled:opacity-50
   flex items-center justify-center gap-2"
           >
