@@ -22,10 +22,23 @@ Shoppi is a full-stack food delivery web application where users can discover re
 
 ## Popular Page
 <br> 
-<img width="1588" height="1375" alt="popular_page" src="https://github.com/user-attachments/assets/6ccb3ac5-e557-4542-93f1-ef68e46cbaef" />
+<img width="3130" height="2378" alt="popular-page" src="https://github.com/user-attachments/assets/9735177a-3c50-4b32-9087-df74ed713166" />
+<br>
 <br>
 <p>
   Restaurant listing page with category browsing, price range and feature filters (Budget Friendly, Free Delivery, Fine Dining).
+</p>
+
+<br>
+
+
+## Restaurant Detail Page
+<br> 
+<img width="3130" height="3840" alt="restaurant-detail-page" src="https://github.com/user-attachments/assets/54868efc-5595-40f8-922c-dc20ffeb67c6" />
+<br>
+<br>
+<p>
+  Displays restaurant details, rating, image gallery, opening hours, delivery information, and menu items.
 </p>
 
 <br>
