@@ -13,3 +13,17 @@ export const getRestaurants = async () =>{
 
     return data;
 }
+
+export const getRestaurantById = async (id) => {
+  const res = await fetch(`${API_URL}/${id}`, {
+    method: "GET",
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.message || "Failed to fetch restaurant.");
+  }
+
+  return data;
+};
