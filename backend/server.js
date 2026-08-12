@@ -12,9 +12,11 @@ app.use(express.json());
 
 const authRoutes = require("./routes/auth");
 const restaurantsRoutes = require("./routes/restaurant")
+const mealsRoutes = require("./routes/meals")
 
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurants", restaurantsRoutes)
+app.use("/api/meals", mealsRoutes)
 
 
 mongoose.connect(process.env.MONGO_URI)
