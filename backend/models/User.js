@@ -23,7 +23,40 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["user", "admin"],
     default: "user"
-  }
+  },
+
+  country: {
+    type: String,
+    default: "Germany"
+  },
+
+  phone: {
+    type: String,
+    default: ""
+  },
+
+  address: {
+    type: String,
+    default: ""
+  },
+
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Restaurant"
+    }
+  ],
+
+  paymentMethods: [
+    {
+      type: {
+        type: String, 
+        default: "card"
+      },
+      last: String,
+      brand: String
+    }
+  ]
 }, {
   timestamps: true
 });
