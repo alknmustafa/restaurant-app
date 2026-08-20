@@ -11,25 +11,27 @@ app.use(cors());
 app.use(express.json());
 
 const authRoutes = require("./routes/auth");
-const restaurantsRoutes = require("./routes/restaurant")
-const mealsRoutes = require("./routes/meals")
+const restaurantsRoutes = require("./routes/restaurant");
+const mealsRoutes = require("./routes/meals");
+const addressRoutes = require("./routes/address");
+const orderRoutes = require("./routes/orders");
 
 app.use("/api/auth", authRoutes);
-app.use("/api/restaurants", restaurantsRoutes)
-app.use("/api/meals", mealsRoutes)
-
+app.use("/api/restaurants", restaurantsRoutes);
+app.use("/api/meals", mealsRoutes);
+app.use("/api/addresses", addressRoutes);
+app.use("/api/orders", orderRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("DB error:", err));
+    .then(() => console.log("MongoDB connected"))
+    .catch((err) => console.log("DB error:", err));
 
 // test route
 app.get("/", (req, res) => {
-  res.send("API is running 🍕");
-
+    res.send("API is running 🍕");
 });
 
 // server start
 app.listen(process.env.PORT, () => {
-  console.log("Server running on port " + process.env.PORT);
+    console.log("Server running on port " + process.env.PORT);
 });
