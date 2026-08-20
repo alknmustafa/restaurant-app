@@ -1,212 +1,258 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ButtonComponent from "./ButtonComponent";
+import UserIcon from "../../public/icons/UserIcon";
+import ButtonComponent from "../components/ButtonComponent";
+import ShoppingBagIcon from "../../public/icons/ShoppingBagIcon";
+import { CartContext } from "../context/CartContext";
+import CartSummary from "./CartSummary";
 
-export default function Navbar() {
-  const [open, setOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const username = localStorage.getItem("name");
+export default function Navbar({ variant = "default" }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
 
-  const dropDownRef = useRef(null);
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [username, setUsername] = useState(
+    localStorage.getItem("name") || "Account"
+  );
+
+  const { cartItems } = useContext(CartContext);
+
+  const cartCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
   const navigate = useNavigate();
+  const ref = useRef(null);
 
-  const token = localStorage.getItem("token");
+  const showMenu = variant !== "hideMenu";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("name");
-    setOpen(false);
-    setMobileOpen(false);
+
+    setToken(null);
+    setMenuOpen(false);
+
     navigate("/login");
   };
 
-  // CLICK OUTSIDE DROPDOWN
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        dropDownRef.current &&
-        !dropDownRef.current.contains(event.target)
-      ) {
-        setOpen(false);
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setMenuOpen(false);
+        setMobileMenuOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handler);
+
+    return () => {
+      document.removeEventListener("mousedown", handler);
+    };
   }, []);
 
   return (
-    <nav className="flex flex-row items-center p-6 bg-white border-b sticky w-full z-50">
+    <nav className="flex items-center justify-between p-6 bg-white border-b sticky top-0 z-50">
 
-      {/* LEFT - LOGO + MENU */}
+      {/* LEFT */}
       <div className="flex items-center gap-10">
 
-        {/* LOGO */}
-        <Link to="/" className="ml-3">
+        <Link to="/">
           <img
-            className="w-22 h-12"
-            src="./images/shoppi-logo-img.png"
-            alt="logo"
+            className="w-30 h-10"
+            src="/images/shoppi-logo-img.png"
           />
         </Link>
 
-        {/* MENU */}
-        <div className="hidden md:flex items-center gap-8">
-          <Link className="text-gray-500 hover:text-black">Home</Link>
-          <Link className="text-gray-500 hover:text-black">Popular</Link>
-          <Link className="text-gray-500 hover:text-black">Search</Link>
-        </div>
+        {showMenu && (
+          <div className="hidden md:flex gap-6 text-gray-500">
+            <Link to="/">Home</Link>
+            <Link to="/popular">Popular</Link>
+            <Link to="/search">Search</Link>
+          </div>
+        )}
 
       </div>
 
       {/* RIGHT */}
-      <div className="ml-auto flex items-center gap-6">
+      <div
+        className="relative flex items-center gap-3"
+        ref={ref}
+      >
 
-        {/* DESKTOP AUTH */}
-        <div className="hidden md:flex items-center gap-6">
+        {/* USER BUTTON */}
+        {token && (
+          <button
+            onClick={() => setMenuOpen((p) => !p)}
+            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100"
+          >
+            <UserIcon
+              size={18}
+              color="#111827"
+            />
 
-          {!token ? (
-            <>
-              <Link to="/register">
-                <ButtonComponent variant="secondary" children={"Sign Up"}/>
-              </Link>
+            <span className="max-w-[90px] truncate">
+              {username}
+            </span>
 
-              <Link to="/login">
-              <ButtonComponent variant="primary" children={"Login"} className="px-8"/>
-              </Link>
-            </>
-          ) : (
-            <>
-              <button
-                onClick={() => setOpen(!open)}
-                className="text-black px-3 py-1 rounded-md flex items-center gap-2"
-              >
-                {/* USER ICON */}
-                <span>👤</span>
+            <span className="hidden md:inline">
+              ▾
+            </span>
+          </button>
+        )}
 
-                {/* Usernam */}
-                {username ? username : "Account"} ▾
-              </button>
+        {/* CART */}
+        {token && (
+          <div className="relative">
 
-              {/* DROPDOWN */}
-              {open && (
-                <div
-                  ref={dropDownRef}
-                  className="absolute right-6 top-16 w-48 bg-white border rounded shadow-md"
+            <div
+              onClick={() => setCartOpen((current) => !current)}
+              className="cursor-pointer"
+            >
+              <ShoppingBagIcon className="w-6 h-6 text-black" />
+
+              <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-4 h-4 px-1 rounded-full bg-red-500 text-[10px] font-semibold text-white">
+                {cartCount}
+              </span>
+            </div>
+
+            {cartOpen && (
+              <CartSummary
+                onClose={() => setCartOpen(false)}
+              />
+            )}
+
+          </div>
+        )}
+
+        {/* AUTH DESKTOP */}
+        {!token && (
+          <div className="hidden md:flex gap-3">
+
+            <Link to="/login">
+              <ButtonComponent variant="secondary">
+                Login
+              </ButtonComponent>
+            </Link>
+
+            <Link to="/register">
+              <ButtonComponent variant="primary">
+                Register
+              </ButtonComponent>
+            </Link>
+
+          </div>
+        )}
+
+        {/* AUTH MOBILE */}
+        {!token && (
+          <div className="relative md:hidden">
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2"
+            >
+              ☰
+            </button>
+
+            {mobileMenuOpen && (
+              <div className="absolute right-0 top-12 w-56 bg-white border rounded-lg shadow-lg z-50">
+
+                <Link
+                  to="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
                 >
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-gray-700 hover:text-red-500 hover:bg-gray-50 transition"
-                    onClick={() => setOpen(false)}
-                  >
-                    Profile
-                  </Link>
+                  Login
+                </Link>
 
-                  <Link
-                    to="/orders"
-                    className="block px-4 py-2 text-gray-700 hover:text-red-500 hover:bg-gray-50 transition"
-                    onClick={() => setOpen(false)}
-                  >
-                    My Orders
-                  </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
+                >
+                  Register
+                </Link>
 
-                  <Link
-                    to="/settings"
-                    className="block px-4 py-2 text-gray-700 hover:text-red-500 hover:bg-gray-50 transition"
-                    onClick={() => setOpen(false)}
-                  >
-                    Settings
-                  </Link>
+                <Link
+                  to="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
+                >
+                  Home
+                </Link>
 
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2  hover:text-red-500  hover:bg-gray-50 transition"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+                <Link
+                  to="/popular"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
+                >
+                  Popular
+                </Link>
 
-        {/* MOBILE BUTTON */}
-        <button
-          className="md:hidden text-2xl"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          ☰
-        </button>
+                <Link
+                  to="/search"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block px-4 py-3 hover:bg-gray-100"
+                >
+                  Search
+                </Link>
+
+              </div>
+            )}
+
+          </div>
+        )}
+
+        {/* DROPDOWN */}
+        {menuOpen && token && (
+          <div className="absolute right-0 top-12 w-44 bg-white border shadow-md rounded flex flex-col z-50">
+
+            <Link
+              to="/profile"
+              onClick={() => setMenuOpen(false)}
+              className="p-3 hover:text-red-500 hover:bg-gray-50"
+            >
+              Profile
+            </Link>
+
+            <Link
+              to="/orders"
+              onClick={() => setMenuOpen(false)}
+              className="p-3 hover:text-red-500 hover:bg-gray-50"
+            >
+              Orders
+            </Link>
+
+            {/* FAVOURITES */}
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/profile", {
+                  state: {
+                    activeTab: "favourites"
+                  }
+                });
+              }}
+              className="w-full text-left p-3 hover:text-red-500 hover:bg-gray-50"
+            >
+              Favourites
+            </button>
+
+            {/* LOGOUT */}
+            <button
+              onClick={handleLogout}
+              className="p-3 text-left hover:text-red-500 hover:bg-gray-50"
+            >
+              Logout
+            </button>
+
+          </div>
+        )}
 
       </div>
-
-      {/* MOBILE MENU */}
-      {mobileOpen && (
-        <div className="md:hidden fixed top-16 left-0 w-full bg-white border-t shadow-md flex flex-col gap-4 p-6 z-50">
-
-          <Link
-            to="/"
-            onClick={() => setMobileOpen(false)}
-            className="text-gray-700 hover:text-red-500 transition"
-          >
-            Home
-          </Link>
-
-          <Link
-            to="/popular"
-            onClick={() => setMobileOpen(false)}
-            className="text-gray-700 hover:text-red-500 transition"
-          >
-            Popular
-          </Link>
-
-          <Link
-            to="/search"
-            onClick={() => setMobileOpen(false)}
-            className="text-gray-700 hover:text-red-500 transition"
-          >
-            Search
-          </Link>
-
-          {!token ? (
-            <>
-              <Link
-                to="/login"
-                onClick={() => setMobileOpen(false)}
-                className="text-gray-700 hover:text-red-500 transition"
-              >
-                Login
-              </Link>
-
-              <Link
-                to="/register"
-                onClick={() => setMobileOpen(false)}
-                className="text-gray-700 hover:text-red-500 transition"
-              >
-                Sign up
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/profile"
-                onClick={() => setMobileOpen(false)}
-                className="text-gray-700 hover:text-red-500 transition"
-              >
-                Profile
-              </Link>
-
-              <button
-                onClick={handleLogout}
-                className="text-left text-gray-700 hover:text-red-500 transition"
-              >
-                Logout
-              </button>
-            </>
-          )}
-
-        </div>
-      )}
 
     </nav>
   );
