@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import PlusIcon from "../../public/icons/PlusIcon";
+import MinusIcon from "../../public/icons/MinusIcon";
 
 export default function ReviewOrderModal({
     selectedItem,
@@ -17,7 +19,8 @@ export default function ReviewOrderModal({
         return null;
     }
 
-    const totalPrice = Number(selectedItem.price) * quantity;
+    const totalPrice =
+        Number(selectedItem.price) * quantity;
 
     const increaseQuantity = () => {
         setQuantity((current) => current + 1);
@@ -36,10 +39,12 @@ export default function ReviewOrderModal({
 
     const handleAddToCart = () => {
         addToCart({
+            foodId: selectedItem._id,
+            restaurantId: selectedItem.restaurantId,
             imageUrl: selectedItem.imageUrl,
-            dishName: selectedItem.dishName,
+            foodName: selectedItem.dishName,
             price: Number(selectedItem.price),
-            quantity: quantity,
+            quantity,
         });
 
         onClose();
@@ -74,10 +79,11 @@ export default function ReviewOrderModal({
                 </div>
 
                 {/* COLUMN HEADERS */}
-                <div className="flex justify-between mt-8 pb-3 border-b">
+                <div className="flex justify-between mt-8 p-3 border-b">
 
                     <h3 className="text-sm font-medium text-gray-500">
-                        {quantity} {quantity === 1 ? "Item" : "Items"}
+                        {quantity}{" "}
+                        {quantity === 1 ? "Item" : "Items"}
                     </h3>
 
                     <h3 className="text-sm font-medium text-gray-500">
@@ -115,7 +121,7 @@ export default function ReviewOrderModal({
                                 onClick={decreaseQuantity}
                                 className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-100 transition"
                             >
-                                −
+                                <MinusIcon size={14}/>
                             </button>
 
                             <span className="w-5 text-center font-medium">
@@ -126,7 +132,7 @@ export default function ReviewOrderModal({
                                 onClick={increaseQuantity}
                                 className="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition"
                             >
-                                +
+                                <PlusIcon size={14}/>
                             </button>
 
                         </div>
@@ -141,7 +147,7 @@ export default function ReviewOrderModal({
                 </div>
 
                 {/* TOTAL */}
-                <div className="border-t mt-auto pt-6">
+                <div className="mt-auto pt-6">
 
                     <div className="flex justify-between items-center">
 
