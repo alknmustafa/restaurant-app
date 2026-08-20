@@ -2,12 +2,15 @@ import PortionIcon from "../../public/icons/PortionIcon";
 import CutleryIcon from "../../public/icons/CutleryIcon";
 
 export default function MenuCardComponent({
+    meal,
     imageUrl,
     dishName,
     portion,
     persons,
     description,
     price,
+    restaurantId,
+    onOrder,
 }) {
     return (
         <div className="border rounded-2xl overflow-hidden">
@@ -57,6 +60,15 @@ export default function MenuCardComponent({
                     </h3>
 
                     <button
+                        onClick={() =>
+                            onOrder({
+                                _id: meal._id,
+                                restaurantId: restaurantId,
+                                imageUrl,
+                                dishName,
+                                price: Number(price),
+                            })
+                        }
                         className="px-5 py-2 bg-red-500 text-white rounded-full text-base font-medium hover:bg-red-600 transition"
                     >
                         Order Now
