@@ -56,8 +56,12 @@ export default function PersonalInfoTabComponent({
   return (
     <div className="flex flex-col gap-10">
 
+      <h2 className="text-2xl font-bold text-gray-800">
+        Your Profile
+      </h2>
+
       {/* NAME */}
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-5">
         <p>Name</p>
         <input
           className="border rounded px-3 py-2 w-40"

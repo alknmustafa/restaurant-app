@@ -1,5 +1,6 @@
 const API_URL = "http://localhost:5000/api/auth";
 
+
 // GET USER
 export const getUser = async (token) => {
   const res = await fetch(`${API_URL}/user`, {
@@ -17,6 +18,7 @@ export const getUser = async (token) => {
 
   return data;
 };
+
 
 // UPDATE USER
 export const updateUser = async (token, updateData) => {
@@ -39,19 +41,45 @@ export const updateUser = async (token, updateData) => {
 };
 
 
+// TOGGLE FAVORITE
+export const toggleFavorite = async (token, restaurantId) => {
+  const res = await fetch(
+    `${API_URL}/user/favorites/${restaurantId}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(
+      data.message || "Failed to update favorite"
+    );
+  }
+
+  return data;
+};
+
+
 // DELETE USER
 export const deleteUser = async (token) => {
   const res = await fetch(`${API_URL}/user`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
-    }
+    },
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Failed to delete account");
+    throw new Error(
+      data.message || "Failed to delete account"
+    );
   }
 
   return data;

@@ -1,10 +1,14 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const express = require("express");
 const User = require("../models/User");
 const verifyToken = require("../middleware/verifyToken");
 
 const router = require("express").Router();
+
+
+// =========================
+// REGISTER
+// =========================
 
 router.post("/register", async (req, res) => {
 
@@ -13,17 +17,23 @@ router.post("/register", async (req, res) => {
     try {
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Missing credentials" });
+            return res.status(400).json({
+                message: "Missing credentials"
+            });
         }
 
-        if (!password || password.length < 6) {
-            return res.status(400).json({ message: "Password is too short." });
+        if (password.length < 6) {
+            return res.status(400).json({
+                message: "Password is too short."
+            });
         }
 
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(400).json({ message: "Email already exists." });
+            return res.status(400).json({
+                message: "Email already exists."
+            });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -35,13 +45,24 @@ router.post("/register", async (req, res) => {
         });
 
         await NewUser.save();
-        res.json({ message: "User successfully saved." });
+
+        res.json({
+            message: "User successfully saved."
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            message: err.message
+        });
+
     }
-    catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-}
-);
+});
+
+
+// =========================
+// LOGIN
+// =========================
 
 router.post("/login", async (req, res) => {
 
@@ -49,57 +70,69 @@ router.post("/login", async (req, res) => {
 
     try {
 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(400).json({ message: "User not found" });
+            return res.status(400).json({
+                message: "User not found"
+            });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(
+            password,
+            user.password
+        );
 
         if (!isMatch) {
-            return res.status(400).json({ message: "Wrong password" });
+            return res.status(400).json({
+                message: "Wrong password"
+            });
         }
 
-        const token = jwt.sign({
-            id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role
-        },
-            process.env.JWT_SECRET, {
-            expiresIn: "1d"
-        });
-
+        const token = jwt.sign(
+            {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1d"
+            }
+        );
 
         res.json({
             message: "Login successful",
             token,
             user: {
-                name: user.name,
+                name: user.name
             }
+        });
 
-        })
+    } catch (err) {
+
+        res.status(500).json({
+            message: err.message
+        });
+
     }
-
-    catch (err) {
-        res.status(500).json({ message: err.message })
-    }
-})
-
-router.get("/test", verifyToken, (req, res) => {
-    res.json({
-        message: "Middleware works",
-        user: req.user,
-    });
 });
 
-router.get("/user", verifyToken, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select(
-            "name email country phone address favorites paymentMethods"
 
-        );
+// =========================
+// GET USER
+// =========================
+
+router.get("/user", verifyToken, async (req, res) => {
+
+    try {
+
+        const user = await User.findById(req.user.id)
+            .populate("favorites")
+            .select(
+                "name email country phone addresses favorites paymentMethods"
+            );
 
         if (!user) {
             return res.status(404).json({
@@ -108,58 +141,175 @@ router.get("/user", verifyToken, async (req, res) => {
         }
 
         res.json(user);
-    }
-    catch (err) {
+
+    } catch (err) {
+
         res.status(500).json({
             message: err.message
         });
+
     }
+
 });
 
 
+// =========================
+// UPDATE USER
+// =========================
+
 router.put("/user", verifyToken, async (req, res) => {
+
     try {
+
         const updateData = {};
 
-        if (req.body.name !== undefined) updateData.name = req.body.name;
-        if (req.body.country !== undefined) updateData.country = req.body.country;
-        if (req.body.phone !== undefined) updateData.phone = req.body.phone;
-        if (req.body.address !== undefined) updateData.address = req.body.address;
+        if (req.body.name !== undefined) {
+            updateData.name = req.body.name;
+        }
+
+        if (req.body.country !== undefined) {
+            updateData.country = req.body.country;
+        }
+
+        if (req.body.phone !== undefined) {
+            updateData.phone = req.body.phone;
+        }
 
         const user = await User.findByIdAndUpdate(
             req.user.id,
-            { $set: updateData },
-            { returnDocument: "after" }
-        ).select("name email country phone address");
+            {
+                $set: updateData
+            },
+            {
+                new: true
+            }
+        )
+            .select(
+                "name email country phone addresses favorites paymentMethods"
+            )
+            .populate("favorites");
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
 
         res.json(user);
 
     } catch (err) {
-        res.status(500).json({ message: err.message });
+
+        res.status(500).json({
+            message: err.message
+        });
+
     }
+
 });
 
 
+// =========================
+// TOGGLE FAVORITE
+// =========================
 
-router.delete("/user", verifyToken, async (req, res) => {
-    try {
-        const userId = req.user.id;
+router.put(
+    "/user/favorites/:restaurantId",
+    verifyToken,
+    async (req, res) => {
 
-        const deletedUser = await User.findByIdAndUpdate(userId, { isDeleted: true });
+        try {
 
-        if (!deletedUser) {
-            return res.status(404).json({ message: "User not found" });
+            const user = await User.findById(req.user.id);
+
+            if (!user) {
+                return res.status(404).json({
+                    message: "User not found"
+                });
+            }
+
+            const restaurantId = req.params.restaurantId;
+
+            const alreadyFavorite = user.favorites.some(
+                (favorite) =>
+                    favorite.toString() === restaurantId
+            );
+
+            if (alreadyFavorite) {
+
+                user.favorites = user.favorites.filter(
+                    (favorite) =>
+                        favorite.toString() !== restaurantId
+                );
+
+            } else {
+
+                user.favorites.push(restaurantId);
+
+            }
+
+            await user.save();
+
+            const updatedUser = await User.findById(req.user.id)
+                .populate("favorites")
+                .select(
+                    "name email country phone addresses favorites paymentMethods"
+                );
+
+            res.json({
+                message: alreadyFavorite
+                    ? "Restaurant removed from favorites."
+                    : "Restaurant added to favorites.",
+                favorites: updatedUser.favorites
+            });
+
+        } catch (err) {
+
+            res.status(500).json({
+                message: err.message
+            });
+
         }
 
-        res.json({ message: "Your account deleted successfully." });
     }
-    catch (err) {
-        res.status(500).json({ message: err.message });
+);
+
+
+// =========================
+// DELETE USER
+// =========================
+
+router.delete("/user", verifyToken, async (req, res) => {
+
+    try {
+
+        const userId = req.user.id;
+
+        const deletedUser = await User.findByIdAndUpdate(
+            userId,
+            {
+                isDeleted: true
+            }
+        );
+
+        if (!deletedUser) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        res.json({
+            message: "Your account deleted successfully."
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            message: err.message
+        });
+
     }
 
 });
 
 
-
-
-module.exports = router;    
+module.exports = router;
